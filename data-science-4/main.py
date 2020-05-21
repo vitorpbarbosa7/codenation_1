@@ -163,26 +163,56 @@ region_list.sort()
 region_list
 
 
-# In[74]:
+# In[18]:
 
 
 def q1():
-    return countries_.Region.drop_duplicates().sort_values().to_list()
+    return list(countries_.Region.drop_duplicates().sort_values().to_list())
     # Retorne aqui o resultado da questão 1.
+    
+
+
+# In[19]:
+
+
 q1()
+
+
+# In[20]:
+
+
+type(q1())
+
+
+# In[21]:
+
+
+result1 = q1()
+
+
+# In[22]:
+
+
+type(result1)
+
+
+# In[23]:
+
+
+assert type(result1) == list
 
 
 # ## Questão 2
 # 
 # Discretizando a variável `Pop_density` em 10 intervalos com `KBinsDiscretizer`, seguindo o encode `ordinal` e estratégia `quantile`, quantos países se encontram acima do 90º percentil? Responda como um único escalar inteiro.
 
-# In[19]:
+# In[24]:
 
 
 from sklearn.preprocessing import KBinsDiscretizer
 
 
-# In[20]:
+# In[25]:
 
 
 #Diferença entre chamar com ponto . e com [['']]:
@@ -190,25 +220,25 @@ from sklearn.preprocessing import KBinsDiscretizer
 # O 'Discretizer' pede dimensão 2
 
 
-# In[21]:
+# In[26]:
 
 
 countries_['Pop_density']
 
 
-# In[22]:
+# In[27]:
 
 
 countries_.Pop_density.shape
 
 
-# In[23]:
+# In[28]:
 
 
 countries_[['Pop_density']].shape
 
 
-# In[24]:
+# In[29]:
 
 
 discretizer = KBinsDiscretizer(n_bins=10, encode = 'ordinal', strategy='quantile')
@@ -218,20 +248,20 @@ discretizer.fit(countries_[['Pop_density']])
 Pop_density_bins = pd.DataFrame(discretizer.transform(countries_[['Pop_density']]), columns = ['Pop_density_bins'])
 
 
-# In[25]:
+# In[30]:
 
 
 countries_ = pd.concat([countries_, Pop_density_bins], axis = 1)
 
 
-# In[26]:
+# In[31]:
 
 
 #Desta maneira consigo retornar o valor do índice, utilizando [] para referenciar, como está presente na resposta da questão
 countries_.Pop_density_bins.value_counts().index
 
 
-# In[27]:
+# In[32]:
 
 
 def q2():
@@ -240,52 +270,58 @@ def q2():
 q2()
 
 
+# In[33]:
+
+
+type(q2())
+
+
 # # Questão 3
 # 
 # Se codificarmos as variáveis `Region` e `Climate` usando _one-hot encoding_, quantos novos atributos seriam criados? Responda como um único escalar.
 
-# In[28]:
+# In[34]:
 
 
 #Nuḿero de categorias (se missing)
 climate_attr = countries_.Climate.nunique(); climate_attr
 
 
-# In[29]:
+# In[35]:
 
 
 #Missing também seria uma categoria? 
 countries_[['Climate']].isna().sum().sum()
 
 
-# In[30]:
+# In[36]:
 
 
 #Adicionando a categoria missing
 climate_attr = climate_attr + 1; climate_attr
 
 
-# In[31]:
+# In[37]:
 
 
 countries_.Region.nunique()
 
 
-# In[32]:
+# In[38]:
 
 
 #Número de categorias da Region
 region_attr = countries_.Region.nunique(); region_attr
 
 
-# In[33]:
+# In[39]:
 
 
 #Há missing em Region? não, então não será adicionada nova categoria
 countries_[['Region']].isna().sum().sum()
 
 
-# In[34]:
+# In[40]:
 
 
 from sklearn.preprocessing import OneHotEncoder
@@ -294,26 +330,49 @@ one_hot_encoder = OneHotEncoder(sparse=False, dtype = np.int)
 encoded_region_climate = one_hot_encoder.fit_transform(countries_[['Climate','Region']])
 
 
-# In[35]:
+# In[41]:
 
 
 #Sâo portanto 18 novos atributos, como indicava a análise anterior
 encoded_region_climate.shape
 
 
-# In[73]:
+# In[42]:
 
 
 def q3():
-    return int(encoded_region_climate.shape[1])
+    return np.int(encoded_region_climate.shape[1])
     # Retorne aqui o resultado da questão 3.
+
+
+# In[43]:
+
+
 q3()
 
 
-# In[72]:
+# In[44]:
 
 
-type(encoded_region_climate.shape[1])
+type(q3())
+
+
+# In[45]:
+
+
+result3 = q3()
+
+
+# In[46]:
+
+
+type(result3)
+
+
+# In[47]:
+
+
+assert type(result3) == int
 
 
 # ## Questão 4
@@ -325,7 +384,7 @@ type(encoded_region_climate.shape[1])
 # 
 # Após aplicado o _pipeline_ descrito acima aos dados (somente nas variáveis dos tipos especificados), aplique o mesmo _pipeline_ (ou `ColumnTransformer`) ao dado abaixo. Qual o valor da variável `Arable` após o _pipeline_? Responda como um único float arredondado para três casas decimais.
 
-# In[38]:
+# In[48]:
 
 
 from sklearn.pipeline import Pipeline
@@ -335,7 +394,7 @@ from sklearn.preprocessing import StandardScaler
 
 # ### Criação do pipeline
 
-# In[39]:
+# In[49]:
 
 
 pipeline = Pipeline(steps = [
@@ -346,13 +405,13 @@ pipeline = Pipeline(steps = [
 
 # Aplicação do pipeline:
 
-# In[40]:
+# In[50]:
 
 
 pipe_float = pipeline.fit_transform(countries_.iloc[:,list(range(2,20))]); pipe_float
 
 
-# In[41]:
+# In[51]:
 
 
 test_country = [
@@ -368,7 +427,7 @@ test_country = [
 
 # Tratamento para poder aplicar o transform na nova observação test_country:
 
-# In[42]:
+# In[52]:
 
 
 df_test_country = pd.DataFrame(test_country).T; df_test_country
@@ -376,7 +435,7 @@ df_test_country = pd.DataFrame(test_country).T; df_test_country
 
 # Voltar os nomes das colunas:
 
-# In[43]:
+# In[53]:
 
 
 df_test_country.columns = list(countries); df_test_country
@@ -384,7 +443,7 @@ df_test_country.columns = list(countries); df_test_country
 
 # Aplicar o transform do pipeline que foi criado com o fit na base completa:
 
-# In[44]:
+# In[54]:
 
 
 test_country_pipe = pipeline.transform(df_test_country.drop(columns = ['Country','Region'], axis = 1))
@@ -392,14 +451,14 @@ test_country_pipe = pipeline.transform(df_test_country.drop(columns = ['Country'
 
 # Facilitar visualização com um dataframe, de modo a visualizar rapidamente qual é a variável Arable
 
-# In[45]:
+# In[55]:
 
 
 df_test_country_pipe = pd.DataFrame(test_country_pipe, columns = list(countries.drop(columns = ['Country','Region'], axis = 1)))
 df_test_country_pipe
 
 
-# In[46]:
+# In[56]:
 
 
 def q4():
@@ -408,6 +467,12 @@ def q4():
     pass
 
 q4()
+
+
+# In[57]:
+
+
+type(q4())
 
 
 # ## Questão 5
@@ -422,7 +487,7 @@ q4()
 
 # ### Visualização de outliers através do boxplot
 
-# In[47]:
+# In[58]:
 
 
 sns.boxplot(countries_.Net_migration, orient = 'vertical')
@@ -430,7 +495,7 @@ sns.boxplot(countries_.Net_migration, orient = 'vertical')
 
 # ### Visualização de outliers através de histograma
 
-# In[48]:
+# In[59]:
 
 
 sns.distplot(countries_.Net_migration)
@@ -438,7 +503,7 @@ sns.distplot(countries_.Net_migration)
 
 # Visualização dos 5 primeiros países com maior net migration 
 
-# In[49]:
+# In[60]:
 
 
 countries_.sort_values(by=['Net_migration'], ascending = False).head(5)
@@ -446,7 +511,7 @@ countries_.sort_values(by=['Net_migration'], ascending = False).head(5)
 
 # Visualização dos 5 países com menor Net Migration
 
-# In[50]:
+# In[61]:
 
 
 countries_.sort_values(by = ['Net_migration'], ascending = True).head(5)
@@ -455,7 +520,7 @@ countries_.sort_values(by = ['Net_migration'], ascending = True).head(5)
 # ### Não deve-se remover estes outliers, eles são dados reais que indicam as taxas de Imigração de um país.
 # ### Os outliers só indicam que os países com valores acima de 15 por exemplo são países que entram muito mais pessoas do que saem e vice-versa para aqueles com valores abaixo de -15 aproximadamente
 
-# In[51]:
+# In[62]:
 
 
 q1 = countries_.Net_migration.quantile(0.25)
@@ -468,7 +533,7 @@ outliers_inferior = countries_[countries_['Net_migration'] < outlier_limits[0]]
 outliers_superior = countries_[countries_['Net_migration'] > outlier_limits[1]]
 
 
-# In[52]:
+# In[63]:
 
 
 def q5():
@@ -477,6 +542,12 @@ def q5():
     pass
 
 q5()
+
+
+# In[64]:
+
+
+type(q5())
 
 
 # ## Questão 6
@@ -492,20 +563,20 @@ q5()
 # 
 # Aplique `CountVectorizer` ao _data set_ `newsgroups` e descubra o número de vezes que a palavra _phone_ aparece no corpus. Responda como um único escalar.
 
-# In[53]:
+# In[65]:
 
 
 from sklearn.datasets import fetch_20newsgroups
 
 
-# In[54]:
+# In[66]:
 
 
 #Definição das bibliotecas de documentos para importar:
 categories = ['sci.electronics', 'comp.graphics', 'rec.motorcycles']
 
 
-# In[55]:
+# In[67]:
 
 
 #Carregando o subset de treino? (mas não era para carregar o de teste?)
@@ -520,20 +591,20 @@ newsgroups = fetch_20newsgroups(subset = 'train',
 
 # ### Aplicar o Count Vectorizer para descobrir quantas vezes a palavra j aparece no documento i 
 
-# In[56]:
+# In[68]:
 
 
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-# In[57]:
+# In[69]:
 
 
 count_vectorizer = CountVectorizer()
 newsgroups_counts = count_vectorizer.fit_transform(newsgroups.data)
 
 
-# In[58]:
+# In[70]:
 
 
 #Passando para dataframe:
@@ -542,13 +613,13 @@ df_newsgroups_vectorizer
                                        
 
 
-# In[59]:
+# In[71]:
 
 
 #Contabilizar o número de vezes que aparece a palavra phone
 
 
-# In[60]:
+# In[72]:
 
 
 def q6():
@@ -559,17 +630,23 @@ def q6():
 q6()
 
 
+# In[73]:
+
+
+type(q6())
+
+
 # ## Questão 7
 # 
 # Aplique `TfidfVectorizer` ao _data set_ `newsgroups` e descubra o TF-IDF da palavra _phone_. Responda como um único escalar arredondado para três casas decimais.
 
-# In[61]:
+# In[74]:
 
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-# In[62]:
+# In[75]:
 
 
 tfidf_vectorizer = TfidfVectorizer()
@@ -579,20 +656,20 @@ tfidf_vectorizer.fit(newsgroups.data)
 newsgroups_tfidf_vectorized = tfidf_vectorizer.transform(newsgroups.data)
 
 
-# In[63]:
+# In[76]:
 
 
 df_newsgroups_tfidf_vectorized = pd.DataFrame(newsgroups_tfidf_vectorized.toarray(),
                                               columns = tfidf_vectorizer.get_feature_names())
 
 
-# In[64]:
+# In[77]:
 
 
 df_newsgroups_tfidf_vectorized
 
 
-# In[65]:
+# In[78]:
 
 
 def q7():
@@ -603,39 +680,45 @@ def q7():
 q7()
 
 
+# In[79]:
+
+
+type(q7())
+
+
 # ## Qual o maior tfidf?
 
-# In[66]:
+# In[ ]:
 
 
 tfidf_todas = [df_newsgroups_tfidf_vectorized.iloc[:,i].sum() for i in list(range(0,df_newsgroups_tfidf_vectorized.shape[1]))]
 
 
-# In[67]:
+# In[ ]:
 
 
 names = tfidf_vectorizer.get_feature_names()
 
 
-# In[68]:
+# In[ ]:
 
 
 len(names)
 
 
-# In[69]:
+# In[ ]:
 
 
 len(tfidf_todas)
 
 
-# In[70]:
+# In[ ]:
 
 
 df_tfidf_importance = pd.DataFrame({'Palavras': names, 'Tfidf': tfidf_todas})
 
 
-# In[71]:
+# In[ ]:
 
 
 df_tfidf_importance.sort_values(by='Tfidf', ascending = False).head(10)
