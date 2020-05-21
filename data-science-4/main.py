@@ -163,13 +163,12 @@ region_list.sort()
 region_list
 
 
-# In[18]:
+# In[74]:
 
 
 def q1():
     return countries_.Region.drop_duplicates().sort_values().to_list()
     # Retorne aqui o resultado da questão 1.
-    pass
 q1()
 
 
@@ -302,20 +301,19 @@ encoded_region_climate = one_hot_encoder.fit_transform(countries_[['Climate','Re
 encoded_region_climate.shape
 
 
-# In[36]:
+# In[73]:
 
 
 def q3():
     return int(encoded_region_climate.shape[1])
     # Retorne aqui o resultado da questão 3.
-    pass
 q3()
 
 
-# In[37]:
+# In[72]:
 
 
-type(climate_attr + region_attr)
+type(encoded_region_climate.shape[1])
 
 
 # ## Questão 4
