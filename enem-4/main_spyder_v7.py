@@ -95,12 +95,21 @@ X_train, X_test, y_train, y_test = train_test_split(X_smote, y_smote,
 
 # %%Regressão Logistica:
 from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression(max_iter = 10000)
+model = LogisticRegression(max_iter = 10000)
 
-lr.fit(X_train, y_train)
+model.fit(X_train, y_train)
+
+# %%Random Forest:
+from sklearn.ensemble import RandomForestRegressor
+
+model =  RandomForestRegressor(n_estimators=500,
+                                   max_depth=100,
+                                   random_state=42)
+
+
 
 # %% Predição
-predicao = lr.predict(X_test)
+predicao = model.predict(X_test)
 
 from sklearn.metrics import confusion_matrix, accuracy_score
 
@@ -110,7 +119,7 @@ acuracia = accuracy_score(y_test, predicao); acuracia
 
 # %%Previsão para os dados submission:
 
-submission_predict = lr.predict(X_submission_scaled)
+submission_predict = model.predict(X_submission_scaled)
 
 test = pd.read_csv('test.csv')
 
