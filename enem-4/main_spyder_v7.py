@@ -77,18 +77,25 @@ ss_X_test = StandardScaler()
 X_train_scaled = ss_X_train.fit_transform(X_train)
 X_submission_scaled = ss_X_test.fit_transform(submission)
 
+# %%SMOTE para reamostrar e resolver a questão da calsse minoritária
+from imblearn.over_sampling import SMOTE
+smote = SMOTE(sampling_strategy='minority')
+
+X_smote, y_smote =  smote.fit_resample(X = X_train_scaled, y = y_train)
+
+
 # %%Separação entre dados de teste e de treinamento (na base de treinamento )
 # Ainda não é a previsão final sobre os dados de test (submission) para serem submetidos
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X_train_scaled, y_train, 
+X_train, X_test, y_train, y_test = train_test_split(X_smote, y_smote, 
                                                     test_size = 0.3, 
                                                     random_state = 42)
 
 
 # %%Regressão Logistica:
 from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression()
+lr = LogisticRegression(max_iter = 10000)
 
 lr.fit(X_train, y_train)
 
@@ -97,9 +104,9 @@ predicao = lr.predict(X_test)
 
 from sklearn.metrics import confusion_matrix, accuracy_score
 
-matriz = confusion_matrix(y_test, predicao)
+matriz = confusion_matrix(y_test, predicao); matriz
 
-acuracia = accuracy_score(y_test, predicao)
+acuracia = accuracy_score(y_test, predicao); acuracia
 
 # %%Previsão para os dados submission:
 
