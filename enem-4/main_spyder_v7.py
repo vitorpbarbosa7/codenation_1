@@ -95,9 +95,24 @@ lr.fit(X_train, y_train)
 # %% Predição
 predicao = lr.predict(X_test)
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 matriz = confusion_matrix(y_test, predicao)
+
+acuracia = accuracy_score(y_test, predicao)
+
+# %%Previsão para os dados submission:
+
+submission_predict = lr.predict(X_submission_scaled)
+
+test = pd.read_csv('test.csv')
+
+new_df = np.array([test.NU_INSCRICAO, submission_predict]).T
+
+df_answer = pd.DataFrame(new_df, 
+                         columns = ['NU_INSCRICAO','IN_TREINEIRO'])
+
+df_answer.to_csv('answer.csv', sep = ',', index = False)
 
 
 
