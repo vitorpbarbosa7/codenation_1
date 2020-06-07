@@ -22,6 +22,8 @@ train = train[newtrain_features]
 train = train.drop('NU_INSCRICAO', axis = 1)
 test = test.drop('NU_INSCRICAO', axis = 1)
 
+
+# %%Label Encoder
 object_features_train = list(train.select_dtypes(include = 'object'))
 object_features_test = list(test.select_dtypes(include = 'object'))
 
@@ -51,6 +53,13 @@ def label_encoder(df, feat_le):
 
 train_array = label_encoder(train_array, feat_le_train)
 test_array = label_encoder(test_array, feat_le_test)
+
+# %%Bypass label encoder e selecionar só algumas features
+
+train  = train[['TP_ST_CONCLUSAO', 'NU_IDADE', 'TP_ANO_CONCLUIU', 'TP_ESCOLA','IN_TREINEIRO']]
+test = train[['TP_ST_CONCLUSAO', 'NU_IDADE', 'TP_ANO_CONCLUIU', 'TP_ESCOLA']]
+train_array =  train.values
+test_array = test.values
 # %% Preencher os valores missing com 0:
 from sklearn.impute import SimpleImputer
 
@@ -77,13 +86,30 @@ ss_X_test = StandardScaler()
 X_train_scaled = ss_X_train.fit_transform(X_train)
 X_submission_scaled = ss_X_test.fit_transform(submission)
 
+
+# %%Bypass StandardScaler
+
+X_train_scaled = X_train
+X_submission_scaled = submission
+
+
 # %%SMOTE para reamostrar e resolver a questão da calsse minoritária
 from imblearn.over_sampling import SMOTE
 smote = SMOTE(sampling_strategy='minority')
 
 X_smote, y_smote =  smote.fit_resample(X = X_train_scaled, y = y_train)
 
+# %%PCA:
+from sklearn.decomposition import PCA
+pca_train = PCA(n_components=5)
+pca_fitted_train = pca.fit(X_smote)
+pca_data_train = pca_fitted_train.transform(X_smote)
 
+pca_submission = PCA(n_components = 2)
+pca_fitted_submission = pca_submission.fit(X_submission_scaled)
+pca_data_submission = pca_fitted_submission.transform(X_submission_scaled)
+
+sns.scatterplot(pca_data[:,0], pca_data[:,1], hue = y_smote)
 # %%Separação entre dados de teste e de treinamento (na base de treinamento )
 # Ainda não é a previsão final sobre os dados de test (submission) para serem submetidos
 
@@ -91,13 +117,6 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_smote, y_smote, 
                                                     test_size = 0.3, 
                                                     random_state = 42)
-
-
-# %%Regressão Logistica:
-from sklearn.linear_model import LogisticRegression
-model = LogisticRegression(max_iter = 10000)
-
-model.fit(X_train, y_train)
 
 # %%Random Forest:
 from sklearn.ensemble import RandomForestClassifier
@@ -120,9 +139,12 @@ acuracia = accuracy_score(y_test, predicao); acuracia
 
 submission_predict = model.predict(X_submission_scaled)
 
+#Neural:
+submission_predict = np.round(model.predict(X_submission_scaled)).reshape(-1)
+
 test = pd.read_csv('test.csv')
 
-new_df = np.array([test.NU_INSCRICAO, submission_predict]).T
+new_df = np.array(list(zip(test.NU_INSCRICAO.values, submission_predict)))
 
 df_answer = pd.DataFrame(new_df, 
                          columns = ['NU_INSCRICAO','IN_TREINEIRO'])

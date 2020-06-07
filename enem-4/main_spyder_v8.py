@@ -83,7 +83,13 @@ smote = SMOTE(sampling_strategy='minority')
 
 X_smote, y_smote =  smote.fit_resample(X = X_train_scaled, y = y_train)
 
+# %%PCA:
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+pca_fitted = pca.fit(X_smote)
+pca_data = pca_fitted.transform(X_smote)
 
+sns.scatterplot(pca_data[:,0], pca_data[:,1], hue = y_smote)
 # %%Separação entre dados de teste e de treinamento (na base de treinamento )
 # Ainda não é a previsão final sobre os dados de test (submission) para serem submetidos
 
@@ -91,7 +97,6 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_smote, y_smote, 
                                                     test_size = 0.3, 
                                                     random_state = 42)
-
 
 # %%Regressão Logistica:
 from sklearn.linear_model import LogisticRegression
@@ -120,15 +125,18 @@ acuracia = accuracy_score(y_test, predicao); acuracia
 
 submission_predict = model.predict(X_submission_scaled)
 
-test = pd.read_csv('test.csv')
+#Neural:
+submission_predict = np.round(model.predict(X_submission_scaled)).reshape(-1)
 
-new_df = np.array([test.NU_INSCRICAO, submission_predict]).T
-
-df_answer = pd.DataFrame(new_df, 
-                         columns = ['NU_INSCRICAO','IN_TREINEIRO'])
-
-df_answer.to_csv('answer.csv', sep = ',', index = False)
-
-
+    test = pd.read_csv('test.csv')
+    
+    new_df = np.array([test.NU_INSCRICAO, submission_predict]).T
+    
+    df_answer = pd.DataFrame(new_df, 
+                             columns = ['NU_INSCRICAO','IN_TREINEIRO'])
+    
+    df_answer.to_csv('answer.csv', sep = ',', index = False)
+    
+    
 
 
