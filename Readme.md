@@ -16,6 +16,6 @@
 
 - enem-2: Previsão das notas de matemática de alunos que prestaram o ENEM (primeira versão)
 
-- enem-2: Previsão das notas de matemática de alunos que prestaram o ENEM (segunda versão)
+- enem-4: Previsão das notas de matemática de alunos que prestaram o ENEM (segunda versão)
 
 
