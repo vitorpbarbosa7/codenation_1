@@ -1,0 +1,21 @@
+Streamlit plan:
+
+#Importar a base de dados
+
+#Número de linhas
+
+#Número de colunas
+
+#Estatísticas básicas:
+- Média
+- Mediana
+- Desvio padrão
+- Kurtosis
+- Skewness
+- Describe
+
+#Visualização de dados interativa
+- Histograma
+- Barplot
+- Scatterplot
+- Correlacao
